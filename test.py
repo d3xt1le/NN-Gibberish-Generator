@@ -5,6 +5,7 @@ from keras.layers import Dense, LSTM
 from keras.optimizers import RMSprop
 import random, nltk, pronouncing
 from nltk.corpus import words
+import time
 
 # ****************************************************************
 # *      FUNCTIONS TO USE NETWORK SEED AND PRODUCE A WORD        *
@@ -45,8 +46,13 @@ def generate_word(length: int) -> str:
 
 # callback class to produce new word after each epoch
 class GenerateWordCallback(Callback):
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epoch_start_time = time.time()
+
     def on_epoch_end(self, epoch, logs=None):
-        print(f"\nAfter epoch {epoch}, generated word: {generate_word(5)}\n")
+        epoch_end_time = time.time()
+        epoch_duration = epoch_end_time - self.epoch_start_time
+        print(f"\nEpoch {epoch} finished in {epoch_duration:.2f} seconds. Generated word: {generate_word(5)}\n")
 
     def on_train_end(self, logs=None):
         print(f"\nTraining complete. Final generated word: {generate_word(5)}\n")
